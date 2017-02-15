@@ -5,8 +5,19 @@ package Destination;
  */
 public class destinationPrevYear
 {
-    public static void main(String[] args)
+    private String dest;
+    public destinationPrevYear()
+    {}
+    public destinationPrevYear(String dest)
     {
-        System.out.println("Testing");
+        //Checks if the input is blank
+        if(dest.trim().length() == 0)
+            throw new IllegalStateException("Invalid Destination! Please check the input");
+        this.dest = dest;
     }
+    public String getDest()
+    {
+        return this.dest;
+    }
+
 }
