@@ -18,7 +18,7 @@ public class JourneyThisYearLL {
 	
 	LinkedList<JourneyThisYear> jTHLL;
 	
-	public JourneyThisYearLL (){
+	public JourneyThisYearLL ()	{
 		jTHLL = new LinkedList<JourneyThisYear>();
 	}
 	
