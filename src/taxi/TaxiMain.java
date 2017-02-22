@@ -3,40 +3,30 @@ package taxi;
 import java.io.*;
 import java.util.*;
 import Destination.*;
+import journey.JourneyThisYearLL;
+import lib.ProcessFile;
 
 public class TaxiMain
 {
 
 	public static void main(String[] args)
 	{
+		ProcessFile pf = new ProcessFile();
 		//Creating an ArrayList of objects of the class destinationPrevYear
 		ArrayList<destinationPrevYear> destPrevY = new ArrayList<destinationPrevYear>();
 		//Creating a HashSet to store the unique destinations
 		HashSet<String> prevYearDest = new HashSet<String>();
+		//Create Linked list of journeys this year
+		JourneyThisYearLL journeyTY = new JourneyThisYearLL();
+		
 		//Reading file from the res folder
-		ClassLoader cl = ClassLoader.getSystemClassLoader();
-		File file = new File(cl.getResource("PrevYearDest").getFile());
-		try (Scanner scanner = new Scanner(file))
-		{
-
-			while (scanner.hasNextLine())
+		ArrayList<String>destinationPrevYearStr = ProcessFile.readFile("PrevYearDest");		
+			for (String line: destinationPrevYearStr)
 			{
-				//For each valid line read, store the value to the object and add the object to the ArrayList
-				String line = scanner.nextLine();
+				//For each valid line read, store the value to the object and add the object to the ArrayList				
 				destinationPrevYear dpy = new destinationPrevYear(line);
 				destPrevY.add(dpy);
 			}
-
-		}
-		catch(FileNotFoundException e)
-		{
-			System.out.println("File is missing!");
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
 		//Iterating through each object, getting the destination value for the current object and then storing them in the HashSet
 		Iterator<destinationPrevYear> itr = destPrevY.iterator();
 		while(itr.hasNext())
@@ -45,5 +35,8 @@ public class TaxiMain
 			prevYearDest.add(x.getDest());
 		}
 		System.out.println(prevYearDest);
+		
+		journeyTY = journeyTY.readFile("journeysofar.csv");
+		
 	}
 }
