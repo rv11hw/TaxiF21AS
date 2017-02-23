@@ -1,12 +1,17 @@
 package journey;
+
+import java.util.Comparator;
+
 /**
  * Class to manage Journey of current year
  * @author Rahul Vijayakumar
  *
  */
-public class JourneyThisYear {
+public class JourneyThisYear{
 	String registrationNo;
 	String destinationName;	
+	double distance = 1.0;
+	double cost;	
 	int noOfPassengers;
 	
 	/**
@@ -51,6 +56,20 @@ public class JourneyThisYear {
 	public void setNoOfPassengers(int noOfPassengers) {
 		this.noOfPassengers = noOfPassengers;
 	}
+	public double getDistance() {
+		return distance;
+	}
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+	public double getCost() {
+		return cost;
+	}
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+
+	
 	
 	public static boolean validateInput(String[] str){
 		Integer noOfPass;
@@ -62,4 +81,11 @@ public class JourneyThisYear {
 		}		
 		return true;
 	}
+	
+	public void calcCost(){
+		double totalCost = 0.0;
+		totalCost = (this.getDistance()*0.5) + (this.getNoOfPassengers()*2);
+		this.setCost(totalCost);
+	}
+
 }

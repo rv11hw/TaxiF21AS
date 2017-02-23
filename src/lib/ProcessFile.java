@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import journey.JourneyThisYear;
-import journey.JourneyThisYearLL;
+import journey.JourneyThisYearTS;
 
 public class ProcessFile {
 
