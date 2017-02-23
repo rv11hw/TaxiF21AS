@@ -1,0 +1,15 @@
+Dubai International City,10
+Dubai Downtown,15
+Deira City Centre,16
+Miracle Garden,13
+Global Village,14
+Jebal Ali Free Zone,15
+Global Village,11
+Dubai Mall,10
+Deira City Centre,12
+Silicon Oasis,16
+Union Station,17
+Miracle Garden,15
+Ghubaiba Station,14
+Jebal Ali Free Zone,13
+Silicon Oasis,12

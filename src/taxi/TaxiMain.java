@@ -1,12 +1,13 @@
 package taxi;
 
-import java.io.*;
 import java.util.*;
 import Destination.*;
 import driver.Driver;
 import journey.JourneyThisYear;
 import journey.JourneyThisYearTS;
 import lib.ProcessFile;
+import location.PresentYear;
+import name_and_ID.SortMethod;
 
 public class TaxiMain {
 
@@ -31,25 +32,88 @@ public class TaxiMain {
 			destinationPrevYear x = (destinationPrevYear) itr.next();
 			prevYearDest.add(x.getDest());
 		}
-		System.out.println(prevYearDest);
+		
+		PresentYear locationList = new PresentYear();
 
 		// Create Linked list of journeys this year
 		JourneyThisYearTS journeyTS = new JourneyThisYearTS();
 		// Read and process journeys
-		journeyTS.readFile("journeysofar.csv");
+		journeyTS.readFile("journeysofar.csv",locationList);
 		// Display content most expensive 5
-		journeyTS.dispContent(5, true);
-		System.out.println("\n");
+		String ipTextJE = journeyTS.dispContent(5);
+		ProcessFile.writeFile("Journey.txt", ipTextJE);
 		// Display content least expensive 5
-		journeyTS.dispContent(5);
+		String ipTextJC = journeyTS.dispContent(5,true);
+		ProcessFile.writeFile("Journey.txt", ipTextJC, true);
 
+		// get driver location tree map
+		String ipTextLoc = getDriverLocation(journeyTS);
+		ProcessFile.writeFile("DriverLocation.txt", ipTextLoc);
+				
 		// journey-year map
-		getJourneyYear(destPrevY, journeyTS);
+		String ipTextLocYear = getJourneyYear(destPrevY, journeyTS);
+		ProcessFile.writeFile("LocationYear.txt", ipTextLocYear);
 
-		//
+		System.out.println("Done!");
+		
+	}
+
+	public static String getJourneyYear(ArrayList<destinationPrevYear> destPrevY, JourneyThisYearTS journeyTS) {
+		final String prvYearStr = "2016";
+		final String currYearStr = "2017";
+		String str = new String();
+		HashMap<String, String> journeyYear = new HashMap<String, String>();
+		ArrayList<String> travelledBoth = new ArrayList<String>();
+		ArrayList<String> travelledPrev = new ArrayList<String>();
+		ArrayList<String> travelledCurr = new ArrayList<String>();
+		for (destinationPrevYear prvYear : destPrevY) {
+			journeyYear.put(prvYear.getDest(), prvYearStr);
+		}
+		for (JourneyThisYear js : journeyTS.getIteratable()) {
+			if (!journeyYear.containsKey(js.getDestinationName())) {
+				journeyYear.put(js.getDestinationName(), currYearStr);
+			} else {
+				journeyYear.put(js.getDestinationName(), "0");
+			}
+		}
+
+		for (String key : journeyYear.keySet()) {
+			if (journeyYear.get(key) == "2016") {
+				travelledPrev.add(key);
+			} else if (journeyYear.get(key) == "2017") {
+				travelledCurr.add(key);
+			} else {
+				travelledBoth.add(key);
+			}
+		}
+
+		
+		str+= ("\n"+travelledPrev.size()+" Places travelled in year "+prvYearStr+"\n");
+		str+= (getListStr(travelledPrev));
+		str+= ("\n"+travelledCurr.size()+" Places travelled in year "+currYearStr+"\n");
+		str+= (getListStr(travelledCurr));
+		str+= ("\n"+travelledBoth.size()+" Places travelled during both years"+"\n");
+		str+= (getListStr(travelledBoth));
+		
+		return str;
+	
+	}
+	
+	static String getListStr(ArrayList<String> strList){
+		String retStr = new String();
+		for(String str: strList){
+			retStr+= str+"\n";
+		}
+		return retStr;
+	}
+
+	public static String getDriverLocation(JourneyThisYearTS journeyTS){
 		String dName = new String();
+		String str;
 		Driver d = new Driver();
-		HashMap<String, String> ds = d.getDriverSet();
+		SortMethod nameId = new SortMethod();
+		SortMethod dNameId = nameId.readFile("driver_input.csv");
+		HashMap<String, String> ds = d.getDriverSet(dNameId.getSort());
 		TreeMap<String, TreeSet<String>> DriverLocation = new TreeMap<String, TreeSet<String>>();
 		for (String driverReg : ds.keySet()) {
 			dName = ds.get(driverReg);
@@ -59,40 +123,8 @@ public class TaxiMain {
 				DriverLocation.put(dName, journeyTS.getLocationByReg(driverReg));
 			}
 		}
-		System.out.println(DriverLocation);
-	}
-
-	public static void getJourneyYear(ArrayList<destinationPrevYear> destPrevY, JourneyThisYearTS journeyTS) {
-		HashMap<String, String> journeyYear = new HashMap<String, String>();
-		String travelledBoth = new String();
-		String travelledPrev = new String();
-		String travelledCurr = new String();
-		for (destinationPrevYear prvYear : destPrevY) {
-			journeyYear.put(prvYear.getDest(), "2016");
-		}
-		for (JourneyThisYear js : journeyTS.getIteratable()) {
-			if (!journeyYear.containsKey(js.getDestinationName())) {
-				journeyYear.put(js.getDestinationName(), "2017");
-			} else {
-				journeyYear.put(js.getDestinationName(), "0");
-			}
-		}
-
-		for (String key : journeyYear.keySet()) {
-			if (journeyYear.get(key) == "2016") {
-				travelledPrev += key + "\n";
-			} else if (journeyYear.get(key) == "2017") {
-				travelledCurr += key + "\n";
-			} else {
-				travelledBoth += key + "\n";
-			}
-		}
-
-		System.out.println("Places travelled in previous year");
-		System.out.println(travelledPrev);
-		System.out.println("Places travelled in current year");
-		System.out.println(travelledCurr);
-		System.out.println("Places travelled in both year");
-		System.out.println(travelledBoth);
+		
+		str = (d.prepareDriverOp(DriverLocation));
+		return str;
 	}
 }

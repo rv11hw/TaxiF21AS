@@ -1,7 +1,5 @@
 package journey;
 
-import java.util.Comparator;
-
 /**
  * Class to manage Journey of current year
  * @author Rahul Vijayakumar
@@ -60,6 +58,9 @@ public class JourneyThisYear{
 		return distance;
 	}
 	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+	public void setDistanceByLocation(String location) {
 		this.distance = distance;
 	}
 	public double getCost() {

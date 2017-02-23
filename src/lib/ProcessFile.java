@@ -1,6 +1,8 @@
 package lib;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -28,5 +30,31 @@ public class ProcessFile {
 			System.exit(0);
 		}
 		return str;		
+	}
+	
+	public static void writeFile(String filename, String input){
+		writeFile(filename, input, false);
+	}
+	
+	public static void writeFile(String filename, String input, Boolean append){
+		FileWriter fw;
+		try {
+			if(append)
+				fw = new FileWriter(filename,true);
+			else
+				fw = new FileWriter(filename);
+			fw.write(input);
+			fw.close();
+		}
+		// message and stop if file not found
+		catch (FileNotFoundException fnf) {
+			System.out.println(filename + " not found ");
+			System.exit(0);
+		}
+		// stack trace here because we don't expect to come here
+		catch (IOException ioe) {
+			ioe.printStackTrace();
+			System.exit(1);
+		}
 	}
 }

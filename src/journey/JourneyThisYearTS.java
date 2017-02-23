@@ -1,9 +1,10 @@
 package journey;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.TreeSet;
-
 import lib.ProcessFile;
+import location.PresentYear;
 
 /**
  * Class to manage the linked list
@@ -13,10 +14,10 @@ import lib.ProcessFile;
  */
 public class JourneyThisYearTS {
 
-	TreeSet<JourneyThisYear> jTHLL;
+	ArrayList<JourneyThisYear> jTHLL;
 
 	public JourneyThisYearTS() {
-		jTHLL = new TreeSet<JourneyThisYear>(new JourneyComparator());
+		jTHLL = new ArrayList<JourneyThisYear>();
 	}
 
 	/**
@@ -36,7 +37,7 @@ public class JourneyThisYearTS {
 	 *            the name of the input file
 	 *
 	 */
-	public void readFile(String filename) {
+	public void readFile(String filename, PresentYear location) {
 		Integer passNo;
 		ArrayList<String> inputStr;
 		inputStr = ProcessFile.readFile(filename);
@@ -47,7 +48,9 @@ public class JourneyThisYearTS {
 				journey.setRegistationNo(strParts[0].trim());
 				journey.setDestinationName(strParts[1].trim());
 				passNo = new Integer(strParts[2].trim());
-				journey.setNoOfPassengers(passNo);
+				journey.setNoOfPassengers(passNo);				
+				double distance = location.getDist(journey.getDestinationName());
+				journey.setDistance(distance);
 				journey.calcCost();
 			}
 			jTHLL.add(journey);
@@ -58,47 +61,54 @@ public class JourneyThisYearTS {
 		return  this.jTHLL;
 	}
 	
-	public void dispContent(int limit){
-		dispContent(limit, false);
+	public String dispContent(int limit){
+		Collections.sort(jTHLL, new JourneyComparator());
+		return dispContent(limit, false);
 	}
 	
-	public void dispContent(int limit, boolean desc){
+	public String dispContent(int limit, boolean desc){
 		TreeSet<JourneyThisYear> ts;
-		int count = 0;
-		if(desc){
-			ts = (TreeSet<JourneyThisYear>) jTHLL.descendingSet();
-		}else{
-			ts = jTHLL;
-		}
+		String str = new String();
+		int init = 0;
 		if(limit == 0){
-			limit = ts.size();
+			limit = jTHLL.size();
 		} 
-		for(JourneyThisYear j: ts){
-			count++;
-			System.out.print(j.getRegistationNo()+"\t");
-			System.out.print(j.getDestinationName()+"\t");
-			System.out.print(j.getDistance()+" km \t");
-			System.out.print(j.getNoOfPassengers()+" people \t");
-			System.out.println(j.getCost()+" AED");
-			if(count == limit)
-				break;
+		str = "\nCHARGES FOR THE TOP 5 JOURNEYS\n";
+		if(desc){
+			init = ((jTHLL.size() - limit)) < 0 ? 0 :((jTHLL.size() - limit));
+			limit = jTHLL.size();
+			str = "\nCHARGES FOR THE CHEAPEST 5 JOURNEYS\n";
 		}
+		
+		while(init != limit){	
+			JourneyThisYear j=jTHLL.get(init);
+			str+= (j.getRegistationNo()+"\t");
+			str+= (j.getDestinationName()+"\t");
+			str+= (j.getDistance()+" km \t");
+			str+= (j.getNoOfPassengers()+" people \t");
+			str+= (j.getCost()+" AED");
+			str+= "\n";
+			init++;
+		}
+		return str;
 	}
 
+	/**
+	 * Add location went by the car registration number
+	 * @param regNo
+	 * @return
+	 */
 	public TreeSet<String> getLocationByReg(String regNo) {
 		TreeSet<String> destSet = new TreeSet<String>();
 		return getLocationByReg(regNo, destSet);
 	}
-	public TreeSet<String> getLocationByReg(String regNo, TreeSet<String> destSet) {	
-		System.out.println(jTHLL.size());
+	
+	public TreeSet<String> getLocationByReg(String regNo, TreeSet<String> destSet) {		
 		for( JourneyThisYear jour : jTHLL){
 			if(jour.getRegistationNo().compareTo(regNo) == 0){
 				destSet.add(jour.getDestinationName());
 			}
 		}
 		return destSet;
-	}
-	
-
-
+	}	
 }
