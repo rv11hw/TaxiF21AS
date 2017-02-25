@@ -1,4 +1,5 @@
 package journey;
+import journey.pasException;
 
 /**
  * Class to manage Journey of current year
@@ -8,7 +9,7 @@ package journey;
 public class JourneyThisYear{
 	String registrationNo;
 	String destinationName;	
-	double distance = 1.0;
+	double distance;
 	double cost;	
 	int noOfPassengers;
 	
@@ -72,10 +73,13 @@ public class JourneyThisYear{
 
 	
 	
-	public static boolean validateInput(String[] str){
+	public static boolean validateInput(String[] str) throws pasException{
 		Integer noOfPass;
 		try{
 			noOfPass = new Integer(str[2].trim());
+			if (noOfPass > 5){
+				throw new pasException("Invalid no of passengers");
+			}
 		} catch(NumberFormatException n){
 			System.out.println("Invalid number format");
 			return false;

@@ -44,16 +44,22 @@ public class JourneyThisYearTS {
 		for (String str : inputStr) {
 			JourneyThisYear journey = new JourneyThisYear();
 			String strParts[] = str.split(",");
-			if (JourneyThisYear.validateInput(strParts)) {
-				journey.setRegistationNo(strParts[0].trim());
-				journey.setDestinationName(strParts[1].trim());
-				passNo = new Integer(strParts[2].trim());
-				journey.setNoOfPassengers(passNo);				
-				double distance = location.getDist(journey.getDestinationName());
-				journey.setDistance(distance);
-				journey.calcCost();
+			try{
+				if (JourneyThisYear.validateInput(strParts)) {
+					journey.setRegistationNo(strParts[0].trim());
+					journey.setDestinationName(strParts[1].trim());
+					passNo = new Integer(strParts[2].trim());
+					journey.setNoOfPassengers(passNo);				
+					double distance = location.getDist(journey.getDestinationName());
+					journey.setDistance(distance);
+					journey.calcCost();
+				}
+				jTHLL.add(journey);
+			} catch(pasException e){
+				//System.out.println("Error");
+				//exit(1);
 			}
-			jTHLL.add(journey);
+			
 		}
 	}
 	
